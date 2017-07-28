@@ -1,0 +1,20 @@
+{
+  "name": "coap-node-test",
+  "version": "0.1.0",
+  "description": "coap stream temperature",
+  "main": "index.js",
+  "scripts": {
+    "start": "NODE_ENV=production node index",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/PeterEB/quick-demo.git"
+  },
+  "author": "Alfvin",
+  "license": "MIT",
+  "dependencies": {
+    "coap-node": "^0.1.4",
+    "smartobject": "^1.1.0"
+  }
+}
