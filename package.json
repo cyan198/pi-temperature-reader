@@ -15,6 +15,7 @@
   "license": "MIT",
   "dependencies": {
     "coap-node": "^0.1.4",
-    "smartobject": "^1.1.0"
+    "smartobject": "^1.1.0",
+    "request": "^2.81.0"
   }
 }
