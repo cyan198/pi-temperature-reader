@@ -1,5 +1,5 @@
 /* eslint-disable  func-names */
-/*eslint no-magic-numbers: ["error", { "ignore": [1000, 200] }]*/
+/*eslint no-magic-numbers: ["error", { "ignore": [1000, 200, 16] }]*/
 
 'use strict';
 
@@ -47,29 +47,29 @@ var sendAlert = function(msg) {
 var getCpuTemp = function () {
   exec("cat /sys/class/thermal/thermal_zone0/temp", function returnTemp (error, stdout, stderr) {
     var msg = so.get('status', deviceId, 'serverMessage');
-    console.log(msg);
+    // console.log(msg);
     if (msg !== 'OK') {
       sendAlert(msg);
     }
+    var temp = 0;
     if (error === null) {
-      var temp = parseFloat(stdout)/1000;
-
-      so.write('status', deviceId, 'temperature', temp, function (err, data) {
-        if (err) {
-          console.log(err);
-        }
-          console.log(data);
-      });
-      so.write('status', deviceId, 'time', new Date().getTime(), function (err, data) {
-        if (err) {
-          console.log(err);
-        }
-          console.log(data);
-      });
-      console.log('output: ' + temp);
+      temp = parseFloat(stdout)/1000;
     } else {
       console.log(stderr);
     }
+    so.write('status', deviceId, 'temperature', temp, function (err, data) {
+      if (err) {
+        console.log(err);
+      }
+        console.log(data);
+    });
+    so.write('status', deviceId, 'time', new Date().getTime(), function (err, data) {
+      if (err) {
+        console.log(err);
+      }
+        console.log(data);
+    });
+    console.log('output: ' + temp);
   })
 };
 
@@ -92,28 +92,31 @@ var onReconnect = function() {
 }
 
 var CoapNode = require('coap-node');
+var crypto = require("crypto");
 // Get mac address for unique ID
 exec("cat /sys/class/net/eth0/address", function (error, stdout, stderr) {
+  var nodeName;
   if (error === null) {
-    var nodeName = String(stdout);
-    // Instantiate a machine node with a client name and your smart object
-    var cnode = new CoapNode(nodeName, so);
-
-    cnode.on('registered', registered);
-
-    cnode.on('offline', onOffline);
-
-    cnode.on('reconnect', onReconnect);
-
-    // register to a Server with its ip and port
-    cnode.register(lwm2mHost, lwm2mPort, function register (err, rsp) {
-        console.log(rsp);      // { status: '2.05' }
-        if (err) {
-          console.log(err);
-        }
-    });
+    nodeName = String(stdout);
   } else {
-    console.log('exec error: ' + error);
     console.log(stderr);
+    nodeName = crypto.randomBytes(16).toString("hex");
   }
+  // Instantiate a machine node with a client name and your smart object
+  var cnode = new CoapNode(nodeName, so);
+
+  cnode.on('registered', registered);
+
+  cnode.on('offline', onOffline);
+
+  cnode.on('reconnect', onReconnect);
+
+  // register to a Server with its ip and port
+  cnode.register(lwm2mHost, lwm2mPort, function register (err, rsp) {
+      console.log(rsp);      // { status: '2.05' }
+      if (err) {
+        console.log(err);
+      }
+  });
+
 });

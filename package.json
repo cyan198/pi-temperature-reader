@@ -1,5 +1,5 @@
 {
-  "name": "coap-node-test",
+  "name": "coap-node",
   "version": "0.1.0",
   "description": "coap stream temperature",
   "main": "index.js",
